@@ -1,21 +1,28 @@
 ---
 name: html-share
-description: Create HTML pages/plans and share them publicly via bore tunnel
+description: Create standalone HTML pages/plans and optionally share them via bore tunnel
 category: dev
 tags: [html, bore, tunnel, sharing, plans, pages, mockups]
 ---
 
 # html-share
 
-Create standalone HTML pages and share them with anyone via a public tunnel. No hosting, no deploy pipeline — write HTML, serve it, tunnel it.
+Create standalone HTML pages — plans, proposals, mockups, dashboards — and optionally share them with a public link via bore tunnel.
 
 ## When to use
 
-- Sharing a plan, proposal, or design mockup as a live web page
-- Sending a clickable link to a teammate for review
-- Quick visual docs that look better than markdown
-- Prototyping a UI concept and getting eyes on it fast
-- Any time you want "a URL I can send someone" for local HTML
+- Creating a visual plan, proposal, or doc that looks better than markdown
+- Building a quick HTML prototype or mockup
+- Sharing a local HTML page with a teammate via a clickable link
+- Any time you want a polished, self-contained HTML page
+
+## Flow
+
+```
+create page → serve locally → (optional) share via bore
+```
+
+The share step is always optional. Ask the user if they want a public link after the page is created and served locally.
 
 ## Steps
 
@@ -54,7 +61,7 @@ Minimal starter:
 </head>
 <body>
   <h1>Your Plan Title</h1>
-  <div class="meta">Created {{date}} · Shared via bore</div>
+  <div class="meta">Created {{date}}</div>
 
   <div class="section">
     <h2>Section heading</h2>
@@ -73,7 +80,7 @@ For richer pages with layout, cards, or interactive elements, use Tailwind via C
 Tips for good shareable pages:
 - **Inline everything** — styles, scripts, fonts. The page must work with zero local dependencies.
 - **Real content, not lorem ipsum** — actual words, actual data. People review content, not placeholders.
-- **Self-documenting** — include a title, date, and author at the top. The person opening the link should know what they're looking at.
+- **Self-documenting** — include a title, date, and author at the top. Anyone opening the page should know what they're looking at.
 - **Mobile-friendly** — add the viewport meta tag. People open links on phones.
 
 ### 2. Serve the page locally
@@ -109,7 +116,16 @@ open http://localhost:9090/your-page.html
 xdg-open http://localhost:9090/your-page.html
 ```
 
-### 3. Expose via bore tunnel
+### 3. Ask: share via bore?
+
+After the page is created and served locally, ask the user:
+
+> "Want me to share this via bore tunnel so you can send a link to someone?"
+
+If yes → proceed to step 4.
+If no → done. The page is available locally at `http://localhost:PORT/your-page.html`.
+
+### 4. Share via bore tunnel (optional)
 
 Install bore if you don't have it:
 
@@ -149,9 +165,7 @@ curl -s -o /dev/null -w "%{http_code}" http://bore.pub:42873/your-page.html
 # Should return: 200
 ```
 
-### 4. Share the link
-
-Send the full URL: `http://bore.pub:PORT/your-page.html`
+Share the full URL: `http://bore.pub:PORT/your-page.html`
 
 Notes:
 - The link works as long as your local server and bore are running
@@ -163,7 +177,6 @@ Notes:
 When done, kill the server and tunnel:
 
 ```bash
-# Find and kill
 lsof -ti:9090 | xargs kill 2>/dev/null
 # bore exits when you Ctrl+C its process
 ```
@@ -246,11 +259,11 @@ For visual prototypes, use Tailwind via CDN for faster styling:
 | Problem | Cause | Fix |
 |---------|-------|-----|
 | `curl` returns `000` | bore or server died | Restart both (server first, then bore) |
-| `Address already in use` | Stale process on port | `lsof -ti:PORT \│ xargs kill -9` |
+| `Address already in use` | Stale process on port | `lsof -ti:PORT \| xargs kill -9` |
 | `could not connect to bore.pub:7835` | bore.pub is down or blocked | Try again, or self-host a bore server |
 | Page loads but looks broken | Missing CSS/font imports | Make sure all resources are inline or from CDN URLs |
-| Page not found (404) | Wrong filename in URL | Check the exact filename and path, bore serves from the directory you started the server in |
-| bore tunnel works but page is blank | HTML syntax error | Open `http://localhost:9090/your-page.html` in browser to see the actual error |
+| Page not found (404) | Wrong filename in URL | Check the exact filename and path |
+| bore tunnel works but page is blank | HTML syntax error | Open `http://localhost:PORT/your-page.html` in browser to see the error |
 
 ## Re-establishing a broken tunnel
 
@@ -290,7 +303,7 @@ Both should return `200`.
 ## Verification
 
 - ✅ `curl localhost:PORT/page.html` returns `200`
-- ✅ `curl bore.pub:REMOTE_PORT/page.html` returns `200`
-- ✅ Page renders correctly in a browser (not just curl)
+- ✅ Page renders correctly in a browser
 - ✅ All styles and scripts are inline or from CDN
 - ✅ Page has a title, date, and context so the recipient knows what they're looking at
+- ✅ (If shared) `curl bore.pub:REMOTE_PORT/page.html` returns `200`
