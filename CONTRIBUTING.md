@@ -58,10 +58,13 @@ How to confirm it worked:
 - Run Y
 ```
 
+The YAML frontmatter is optional but recommended — it makes skills searchable and indexable. The markdown body is the important part.
+
 ### Guidelines
 
 - **One skill per folder** — keep it focused and composable
 - **Self-contained** — someone should be able to read just the SKILL.md and succeed
+- **Agent-agnostic** — don't tie skills to a specific agent framework. Write them as general best practices that work with any tool.
 - **Concrete** — prefer specific commands and code over vague advice
 - **Include pitfalls** — what goes wrong? what's non-obvious?
 - **Test it** — verify your skill works before submitting

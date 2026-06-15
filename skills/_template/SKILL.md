@@ -27,9 +27,11 @@ Copy this folder and edit SKILL.md for your own skill.
 - Don't skip the frontmatter — it's how skills get indexed
 - Don't make skills too broad — one focused skill beats a vague mega-skill
 - Don't forget pitfalls — they're often the most valuable part
+- Don't tie skills to a specific agent framework — keep them universal
 
 ## Verification
 
 - Someone unfamiliar with the topic can follow the skill and succeed
 - The skill has a clear trigger (when to use it)
 - Pitfalls cover at least one non-obvious gotcha
+- The skill works with any agent or as standalone reading

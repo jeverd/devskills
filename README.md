@@ -2,7 +2,7 @@
 
 Open collection of skills, tutorials, and workflows for developers and AI practitioners.
 
-Each skill is a standalone markdown file you can read, copy, or plug into [Hermes Agent](https://github.com/nousresearch/hermes-agent) as a reusable skill.
+Each skill is a standalone markdown file you can read, copy, or plug into any AI agent framework (Claude Code, Codex, Cursor, Windsurf, Hermes, etc.).
 
 ## What's inside
 
@@ -14,7 +14,7 @@ Skills are organized by category:
 
 | Category | Description |
 |---|---|
-| `ai` | LLM ops, prompt engineering, RAG, fine-tuning |
+| `ai` | LLM ops, prompt engineering, RAG, fine-tuning, agents |
 | `dev` | General dev workflows, code quality, testing |
 | `devops` | CI/CD, infrastructure, monitoring |
 | `data` | Data pipelines, analysis, visualization |
@@ -24,18 +24,26 @@ Skills are organized by category:
 
 **As a reference** — just read the markdown. Every skill is self-contained.
 
-**With Hermes Agent** — copy the skill folder into `~/.hermes/skills/`:
+**With any AI agent** — skills are standard markdown files. Drop them wherever your agent looks for instructions:
 
 ```bash
-# Example: install the debugging skill
+# Claude Code — copy to your project's .claude/ or CLAUDE.md
+cp skills/dev/debugging/SKILL.md .claude/skills/debugging.md
+
+# Codex — add to your AGENTS.md or codex instructions
+cat skills/ai/prompt-engineering/SKILL.md >> AGENTS.md
+
+# Cursor — add to .cursor/rules/
+cp skills/dev/code-review/SKILL.md .cursor/rules/code-review.mdc
+
+# Windsurf — add to .windsurfrules
+cat skills/ai/building-agents/SKILL.md >> .windsurfrules
+
+# Hermes — copy to ~/.hermes/skills/
 cp -r skills/dev/debugging ~/.hermes/skills/
 ```
 
-Or use the hermes CLI:
-
-```bash
-hermes skills add https://github.com/jeverd/devskills/raw/main/skills/dev/debugging/SKILL.md
-```
+The format is just structured markdown. Any agent that reads markdown instructions can use these.
 
 ## Contribute
 
