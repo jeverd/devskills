@@ -45,6 +45,57 @@ describe task → propose decomposition → confirm → execute as PR stack
 
 ## Steps
 
+### 0. Run pre-flight checks
+
+Before planning or creating any stack, verify the environment. Do not skip this.
+
+#### Check that `gt` is installed
+
+```bash
+command -v gt && gt --version
+```
+
+If `gt` is missing, stop and prompt the user to install it before proceeding:
+
+```bash
+brew install withgraphite/tap/graphite
+# or
+npm install -g @withgraphite/graphite-cli
+```
+
+Then re-run:
+
+```bash
+gt --version
+gt init
+```
+
+#### Check that the repo is initialized for Graphite
+
+```bash
+gt log
+```
+
+If Graphite says the repo is not initialized, run:
+
+```bash
+gt init
+```
+
+#### Check that the repo is synced with the Graphite app
+
+Before relying on `gt submit`, run a safe dry run from the current stack:
+
+```bash
+gt submit --stack --dry-run --no-interactive
+```
+
+If this fails with a message like "repo is not synced with Graphite" or "only submit to repos synced with Graphite", stop and prompt the user to sync the repo at:
+
+https://app.graphite.com/settings/synced-repos
+
+Do not fall back to `gh pr create` unless the user explicitly approves bypassing Graphite submission. The desired workflow is Graphite-native: `gt create`, `gt modify`, then `gt submit --stack`.
+
 ### 1. Understand the task
 
 Ask the user what they're building or changing. Get enough context to decompose:
@@ -221,6 +272,10 @@ gt submit --stack
 
 See [references/gt-cli.md](references/gt-cli.md) for a compact command cheat sheet covering setup, branch lifecycle, navigation, submitting, syncing, and MCP configuration.
 
+## Quick reference
+
+Full CLI command reference: [references/cli-cheatsheet.md](references/cli-cheatsheet.md)
+
 ## Navigation cheat sheet
 
 ```bash
@@ -265,6 +320,7 @@ Requires Graphite CLI v1.6.7+.
 | PR was merged but stack shows stale branch | `gt sync` — pulls trunk, rebases, deletes merged branches |
 | Need to insert a PR mid-stack | Create it at the right position: `gt down` to the parent branch, then `gt create new-pr-name` |
 | Need to reorder PRs | Not directly supported — best to delete and recreate (`gt delete <branch>`) |
+| `gt submit` fails with "only submit to repos synced with Graphite" | The repo must be registered at https://app.graphite.com/settings/synced-repos. **Fallback**: push each branch and create PRs via `gh`: `git push origin <branch>` then `gh pr create --base <parent-branch> --head <branch> --title "..." --body "..."`. Each PR's `--base` targets the branch directly below it in the stack, not `main`. |
 
 ## Pitfalls
 
