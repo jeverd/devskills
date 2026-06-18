@@ -60,9 +60,9 @@ If the user already described the task, skip ahead.
 Break the task into ordered PRs. Each PR should:
 
 1. **Be independently reviewable** — a reviewer can understand it without reading the other PRs
-2. **Be small** — aim for < 300 lines changed. If you're over 500, split further
+2. **Do one thing** — one concern, one layer, one responsibility. If the title needs an "and" or a comma, split it
 3. **Build on the previous PR** — this is what makes it a stack, not parallel branches
-4. **Do one thing** — one concern, one layer, one responsibility
+4. **Include its own tests** — every PR ships with the tests that verify its change
 
 Present the decomposition as a numbered list:
 
@@ -217,6 +217,10 @@ gt submit --stack
 | 3 | Add UI component | Frontend display |
 | 4 | Wire UI to API + e2e test | Connect them + end-to-end validation |
 
+## CLI quick reference
+
+See [references/gt-cli.md](references/gt-cli.md) for a compact command cheat sheet covering setup, branch lifecycle, navigation, submitting, syncing, and MCP configuration.
+
 ## Navigation cheat sheet
 
 ```bash
@@ -289,5 +293,6 @@ After submitting:
 
 - All PRs appear on GitHub/Graphite
 - Each PR's title is clear and self-contained
-- Each PR's diff is < 300 lines (ideally < 200)
+- Each PR does one thing — no "and" in the title
+- Each PR includes its own tests
 - Reviewers can understand each PR without reading the others
