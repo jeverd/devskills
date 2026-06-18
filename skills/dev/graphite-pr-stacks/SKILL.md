@@ -37,7 +37,7 @@ Bad PRs:
 - "Add endpoint and fix lint" (two unrelated things)
 - "Various fixes" (meaningless)
 
-**Tests live with the code they test.** Each PR includes its own tests — unit tests, integration tests, whatever's needed to verify that PR's change. Don't put tests in a separate "add tests" PR at the end of the stack. A reviewer should be able to verify each PR works in isolation.
+**Tests live with the code they test.** Each PR includes its own tests — unit tests, integration tests, whatever's needed to verify that PR's change. Don't put tests in a separate "add tests" PR at the end of the stack. Also avoid standalone test-only PRs at the start unless the user explicitly approves a safety-net characterization PR for a risky refactor. Default to pairing characterization/regression tests with the first behavior-preserving change. A reviewer should be able to verify each PR works in isolation.
 
 ## Flow
 
@@ -115,8 +115,12 @@ Break the task into ordered PRs. Each PR should:
 1. **Be independently reviewable** — a reviewer can understand it without reading the other PRs
 2. **Do one thing** — one concern, one layer, one responsibility. If the title needs an "and" or a comma, split it
 3. **Scale size to risk** — risky changes should be small and focused; larger mechanical or low-risk changes are fine when backed by concrete verification
-4. **Build on the previous PR** — this is what makes it a stack, not parallel branches
+4. **Build on the previous PR** — this is what makes it a stack, not parallel branches. If two PRs don't depend on each other, they should probably be separate stacks off trunk
 5. **Include its own tests** — every PR ships with the tests that verify its change
+
+If the user's task bundles unrelated concerns, push back and propose separate stacks instead of one long stack. Example: auth + payments + UI cleanup is not one stack unless the payment work directly depends on the auth work; UI cleanup should usually be a separate PR or separate stack.
+
+Always show the pre-flight command block in the proposal, even if the user says not to execute yet. The proposal should make clear that no `gt create` or `gt submit` happens until pre-flight passes and the user confirms the decomposition.
 
 Present the decomposition as a numbered list:
 
@@ -258,9 +262,12 @@ gt submit --stack
 
 | # | PR | What it does |
 |---|-----|-------------|
-| 1 | Extract module/function + update tests | Move code, update tests to match new structure |
-| 2 | Update call sites | Point existing callers at the new module |
-| 3 | Add new capability + tests | Now build on the cleaner foundation |
+| 1 | Extract first module/function + characterization tests | Move one behavior-preserving slice and include tests proving behavior stayed the same |
+| 2 | Update call sites for that slice | Point existing callers at the extracted module if that would make PR 1 too broad |
+| 3 | Extract next module/function + tests | Continue one slice at a time, with tests in the same PR as the moved code |
+| 4 | Remove dead helpers/imports | Cleanup after behavior is safely moved |
+
+Avoid a standalone "add characterization tests" PR unless the user explicitly approves it as a safety-net PR for a risky refactor.
 
 ### Feature with UI
 
@@ -329,6 +336,7 @@ Requires Graphite CLI v1.6.7+.
 
 - **Creating all PRs before writing any code** — `gt create` makes empty branches. Write code for PR 1, then create PR 2's branch, write code, etc. Creating the full stack upfront is fine for planning, but each PR needs real commits.
 - **Making risky code too broad** — risky code should be reviewed in small, focused chunks. Bigger changes are okay when correctness can be demonstrated with evidence: tests, type checks, screenshots, logs, benchmarks, or other concrete verification.
+- **Forcing unrelated work into one stack** — if branches don't depend on each other, create separate stacks from trunk. Don't stack auth, payments, and UI cleanup together unless there is a real dependency chain.
 - **Putting tests in a separate PR** — tests live with the code they test. Every PR should include its own tests. A "test only" PR at the end of the stack means earlier PRs are unverified and the test PR becomes a massive diff dump.
 - **Parallel dependencies** — if PR 3 depends on PR 1 but not PR 2, you have two stacks, not one. Create them as separate stacks off trunk.
 - **Forgetting to sync before starting** — always `gt sync` before creating new branches. Stale trunk = messy rebases later.
