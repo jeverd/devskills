@@ -35,6 +35,8 @@ Bad PRs:
 - "Add endpoint and fix lint" (two unrelated things)
 - "Various fixes" (meaningless)
 
+**Tests live with the code they test.** Each PR includes its own tests — unit tests, integration tests, whatever's needed to verify that PR's change. Don't put tests in a separate "add tests" PR at the end of the stack. A reviewer should be able to verify each PR works in isolation.
+
 ## Flow
 
 ```
@@ -67,25 +69,21 @@ Present the decomposition as a numbered list:
 ```
 PR stack for: "Add user authentication"
 
-1. Add User model + migration
-   - files: models/user.py, migrations/xxx_add_users.py
+1. Add User model + migration + model tests
+   - files: models/user.py, migrations/xxx_add_users.py, tests/test_user_model.py
    - why first: everything else depends on the model existing
 
-2. Add user registration endpoint (POST /users)
-   - files: api/users.py, schemas/user.py
+2. Add user registration endpoint (POST /users) + endpoint tests
+   - files: api/users.py, schemas/user.py, tests/test_registration.py
    - depends on: PR 1
 
-3. Add login endpoint (POST /auth/login)
-   - files: api/auth.py, services/auth.py
+3. Add login endpoint (POST /auth/login) + auth tests
+   - files: api/auth.py, services/auth.py, tests/test_login.py
    - depends on: PR 1
 
-4. Add auth middleware (JWT validation)
-   - files: middleware/auth.py
+4. Add auth middleware (JWT validation) + middleware tests
+   - files: middleware/auth.py, tests/test_auth_middleware.py
    - depends on: PR 2, 3
-
-5. Add integration tests for auth flow
-   - files: tests/test_auth.py
-   - depends on: PR 1-4
 ```
 
 ### 3. Get confirmation
@@ -118,9 +116,6 @@ gt create add-login-endpoint -am "Add POST /auth/login endpoint"
 
 # PR 4: builds on PR 3
 gt create add-auth-middleware -am "Add JWT auth middleware"
-
-# PR 5: builds on PR 4
-gt create add-auth-tests -am "Add integration tests for auth flow"
 ```
 
 Key rules:
@@ -194,36 +189,33 @@ gt submit --stack
 
 | # | PR | What it does |
 |---|-----|-------------|
-| 1 | Add model + migration | Database schema change |
-| 2 | Add business logic | Service layer, validation, calculations |
-| 3 | Add endpoint | Wire up the route, call service layer |
-| 4 | Add tests | Unit + integration tests |
+| 1 | Add model + migration + model tests | Database schema + unit tests for the model |
+| 2 | Add business logic + logic tests | Service layer, validation, calculations + their tests |
+| 3 | Add endpoint + endpoint tests | Wire up the route, call service layer + integration tests |
 
 ### Bug fix with regression test
 
 | # | PR | What it does |
 |---|-----|-------------|
-| 1 | Add regression test | Test that demonstrates the bug (fails) |
-| 2 | Fix the bug | Make the test pass |
-| 3 | Add cleanup/refactor | Optional: improve surrounding code now that it's tested |
+| 1 | Add regression test + fix the bug | Test that demonstrates the bug, then the fix that passes it |
+| 2 | Add cleanup/refactor | Optional: improve surrounding code now that it's tested |
 
 ### Refactor
 
 | # | PR | What it does |
 |---|-----|-------------|
-| 1 | Extract module/function | Move code without changing behavior |
+| 1 | Extract module/function + update tests | Move code, update tests to match new structure |
 | 2 | Update call sites | Point existing callers at the new module |
-| 3 | Add new capability | Now build on the cleaner foundation |
+| 3 | Add new capability + tests | Now build on the cleaner foundation |
 
 ### Feature with UI
 
 | # | PR | What it does |
 |---|-----|-------------|
-| 1 | Add data model | Schema change |
-| 2 | Add API endpoint | Backend API |
+| 1 | Add data model + model tests | Schema change + unit tests |
+| 2 | Add API endpoint + endpoint tests | Backend API + integration tests |
 | 3 | Add UI component | Frontend display |
-| 4 | Wire UI to API | Connect them |
-| 5 | Add e2e test | End-to-end validation |
+| 4 | Wire UI to API + e2e test | Connect them + end-to-end validation |
 
 ## Navigation cheat sheet
 
@@ -274,6 +266,7 @@ Requires Graphite CLI v1.6.7+.
 
 - **Creating all PRs before writing any code** — `gt create` makes empty branches. Write code for PR 1, then create PR 2's branch, write code, etc. Creating the full stack upfront is fine for planning, but each PR needs real commits.
 - **Making a PR too big** — if reviewers are skimming instead of reading, the PR is too big. Split it.
+- **Putting tests in a separate PR** — tests live with the code they test. Every PR should include its own tests. A "test only" PR at the end of the stack means earlier PRs are unverified and the test PR becomes a massive diff dump.
 - **Parallel dependencies** — if PR 3 depends on PR 1 but not PR 2, you have two stacks, not one. Create them as separate stacks off trunk.
 - **Forgetting to sync before starting** — always `gt sync` before creating new branches. Stale trunk = messy rebases later.
 - **Using raw git commands** — `git rebase`, `git cherry-pick`, etc. conflict with Graphite's internal state. Use `gt modify`, `gt sync`, `gt restack` instead.
