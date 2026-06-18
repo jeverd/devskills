@@ -51,6 +51,15 @@ describe task → propose decomposition → confirm → execute as PR stack
 
 Before planning or creating any stack, verify the environment. Do not skip this.
 
+#### Check that you're in a Git repo with a clean working tree
+
+```bash
+git rev-parse --show-toplevel
+git status --short
+```
+
+If `git rev-parse --show-toplevel` fails, stop and ask the user for the correct repo path. If `git status --short` returns unrelated changes, stop and ask the user whether to commit, stash, discard, or move those changes before continuing. Do not run `gt checkout`, `gt sync`, `gt create`, `gt modify`, or `gt submit` with unrelated uncommitted changes present.
+
 #### Check that `gt` is installed
 
 ```bash
@@ -97,6 +106,17 @@ If this fails with a message like "repo is not synced with Graphite" or "only su
 https://app.graphite.com/settings/synced-repos
 
 Do not fall back to `gh pr create` unless the user explicitly approves bypassing Graphite submission. The desired workflow is Graphite-native: `gt create`, `gt modify`, then `gt submit --stack`.
+
+#### Check that planned branch names are available
+
+Before running `gt create <branch>`, check whether the branch already exists:
+
+```bash
+git branch --list <branch-name>
+git branch -r --list origin/<branch-name>
+```
+
+If a branch already exists, do not run the failing `gt create`. Inspect whether that branch is the intended PR (`gt log`, `gt checkout <branch-name>` only after user confirmation if it changes state), reuse it if appropriate, or choose a new unique branch name. Update the stack plan and ask for confirmation again before creating branches.
 
 ### 1. Understand the task
 
@@ -159,9 +179,17 @@ Wait for explicit confirmation before proceeding. Adjust the decomposition based
 For each PR in order, from foundation to tip:
 
 ```bash
+# Confirm repo + clean workspace
+git rev-parse --show-toplevel
+git status --short
+
 # Start from trunk
 gt checkout --trunk
 gt sync
+
+# Check branch names before creating them
+git branch --list add-user-model
+git branch -r --list origin/add-user-model
 
 # PR 1: foundation
 gt create add-user-model -am "Add User model and migration"

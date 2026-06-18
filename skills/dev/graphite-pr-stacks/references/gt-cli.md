@@ -5,13 +5,15 @@ Core commands for PR stack workflows. Full docs: https://graphite.com/docs/cli-t
 ## Setup
 
 ```bash
-command -v gt            # Verify Graphite CLI is installed
-gt --version             # Check version (need v1.6.7+ for MCP)
-gt init                  # Initialize repo, select trunk branch
+git rev-parse --show-toplevel  # Verify you're in the intended repo
+git status --short        # Must be clean or only contain intended changes
+command -v gt             # Verify Graphite CLI is installed
+gt --version              # Check version (need v1.6.7+ for MCP)
+gt init                   # Initialize repo, select trunk branch
 gt submit --stack --dry-run --no-interactive  # Verify repo is synced with Graphite app before real submit
 ```
 
-If `gt submit --stack --dry-run --no-interactive` says the repo is not synced with Graphite, stop and sync it at https://app.graphite.com/settings/synced-repos before proceeding.
+If `git status --short` shows unrelated changes, stop and ask whether to commit/stash/discard/move them before any Graphite branch operations. If `gt submit --stack --dry-run --no-interactive` says the repo is not synced with Graphite, stop and sync it at https://app.graphite.com/settings/synced-repos before proceeding.
 
 ## Branch lifecycle
 
