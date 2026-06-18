@@ -25,6 +25,8 @@ Break any task into a stack of small, reviewable PRs using [Graphite](https://gr
 
 **Each PR does exactly one thing.** A reviewer should understand the full intent of a PR from its title alone. If a PR's title needs an "and" or a comma, it should be split.
 
+**Review risk, not line count.** Risky code should be reviewed in small, focused chunks. Bigger changes are okay when correctness can be demonstrated with evidence: tests, type checks, screenshots, logs, benchmarks, or other concrete verification.
+
 Good PRs:
 - "Add User model and migration"
 - "Add POST /users endpoint"
@@ -112,8 +114,9 @@ Break the task into ordered PRs. Each PR should:
 
 1. **Be independently reviewable** — a reviewer can understand it without reading the other PRs
 2. **Do one thing** — one concern, one layer, one responsibility. If the title needs an "and" or a comma, split it
-3. **Build on the previous PR** — this is what makes it a stack, not parallel branches
-4. **Include its own tests** — every PR ships with the tests that verify its change
+3. **Scale size to risk** — risky changes should be small and focused; larger mechanical or low-risk changes are fine when backed by concrete verification
+4. **Build on the previous PR** — this is what makes it a stack, not parallel branches
+5. **Include its own tests** — every PR ships with the tests that verify its change
 
 Present the decomposition as a numbered list:
 
@@ -325,7 +328,7 @@ Requires Graphite CLI v1.6.7+.
 ## Pitfalls
 
 - **Creating all PRs before writing any code** — `gt create` makes empty branches. Write code for PR 1, then create PR 2's branch, write code, etc. Creating the full stack upfront is fine for planning, but each PR needs real commits.
-- **Making a PR too big** — if reviewers are skimming instead of reading, the PR is too big. Split it.
+- **Making risky code too broad** — risky code should be reviewed in small, focused chunks. Bigger changes are okay when correctness can be demonstrated with evidence: tests, type checks, screenshots, logs, benchmarks, or other concrete verification.
 - **Putting tests in a separate PR** — tests live with the code they test. Every PR should include its own tests. A "test only" PR at the end of the stack means earlier PRs are unverified and the test PR becomes a massive diff dump.
 - **Parallel dependencies** — if PR 3 depends on PR 1 but not PR 2, you have two stacks, not one. Create them as separate stacks off trunk.
 - **Forgetting to sync before starting** — always `gt sync` before creating new branches. Stale trunk = messy rebases later.
