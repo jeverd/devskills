@@ -4,27 +4,24 @@ Open collection of skills, tutorials, and workflows for developers and AI practi
 
 Each skill is a standalone markdown file you can read, copy, or plug into any AI agent framework (Claude Code, Codex, Cursor, Windsurf, Hermes, etc.).
 
-## What's inside
+## Skills
 
-- **skills/** — reusable workflows and procedures (code review, debugging, deployment, etc.)
-- **tutorials/** — step-by-step guides for tools, frameworks, and concepts
-- **templates/** — starter templates for common setups
+| Category | Skill | Description |
+|----------|-------|-------------|
+| dev | [html-share](skills/dev/html-share/SKILL.md) | Create standalone HTML pages and optionally share them via bore tunnel |
+| dev | [graphite-pr-stacks](skills/dev/graphite-pr-stacks/SKILL.md) | Break tasks into small, reviewable PR stacks using Graphite |
 
-Skills are organized by category:
+> Want to add a skill? See [CONTRIBUTING.md](CONTRIBUTING.md) and the [skill template](skills/_template/SKILL.md).
 
-| Category | Description |
-|---|---|
-| `ai` | LLM ops, prompt engineering, RAG, fine-tuning, agents |
-| `dev` | General dev workflows, code quality, testing |
-| `devops` | CI/CD, infrastructure, monitoring |
-| `data` | Data pipelines, analysis, visualization |
-| `security` | Appsec, compliance, hardening |
+## Tutorials
+
+Coming soon — beginner-friendly walkthroughs based on skills in this repo.
 
 ## Use a skill
 
 **As a reference** — just read the markdown. Every skill is self-contained.
 
-**With any AI agent** — skills are standard markdown files. Drop them wherever your agent looks for instructions:
+**With any AI agent** — skills are standard markdown files. Drop them wherever your agent reads instructions:
 
 ```bash
 # Claude Code — copy to your project's .claude/ or CLAUDE.md
