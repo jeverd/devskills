@@ -1,0 +1,49 @@
+name: Skill Request
+description: Suggest a new skill or tutorial for the collection
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion! What skill do you want to see?
+  - type: input
+    id: skill-title
+    attributes:
+      label: Skill/tutorial title
+      description: A short name for the proposed skill
+      placeholder: "docker-deploy"
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Which category does this belong to?
+      options:
+        - ai
+        - dev
+        - devops
+        - data
+        - security
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What should this skill cover?
+      description: Describe the problem it solves and what steps it should include
+      placeholder: |
+        A skill for deploying containerized apps to production...
+        - Docker image building and tagging
+        - Registry push
+        - Deployment strategies (rolling, blue-green)
+        - Health checks and rollback
+    validations:
+      required: true
+  - type: textarea
+    id: pitfalls
+    attributes:
+      label: Any known pitfalls to cover?
+      description: Common mistakes or non-obvious gotchas this skill should warn about
+    validations:
+      required: false

@@ -1,0 +1,42 @@
+name: Bug Report
+description: Report a bug or issue with a skill
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please fill out the sections below.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Describe the bug and what you expected to happen
+      placeholder: "I followed step 3 of the debugging skill, but..."
+    validations:
+      required: true
+  - type: input
+    id: skill-name
+    attributes:
+      label: Skill name
+      description: Which skill has the bug?
+      placeholder: "dev/debugging"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce this?
+      placeholder: |
+        1. Go to skill dev/debugging
+        2. Follow step 3
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Logs, screenshots, environment info
+    validations:
+      required: false
